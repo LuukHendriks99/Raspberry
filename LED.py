@@ -21,7 +21,3 @@ def helloCallBack():
 b = tkinter.Button(frame1, text="LED aan", command=helloCallBack)
 b.pack(pady=20, padx=20)
 top.mainloop()
-
-
-
-
