@@ -25,29 +25,29 @@ connection_counter = 0
 both_buttons = 0
 inbraak = False
 
-while True:
+while True: #Main program loop
     data = bytes("connected", 'UTF-8')
     UDPSock.sendto(data, send_addr)
-    if connection_counter == 5:
+    if connection_counter == 5: #Checks if the connection has been lost for five seconds
         GPIO.output(18, GPIO.HIGH)
         connection_counter = 0
-    readers, _, _ = select.select([UDPSock], [], [], 0.1)
+    readers, _, _ = select.select([UDPSock], [], [], 0.1) #Checks if there are any messages waiting in UDPSock and if so puts UDPSock in a the list readers
     time.sleep(0.1)
-    for reader in readers:
+    for reader in readers: # Goes through list readers which will be empty if there are no messages
         data = reader.recv(buf)
         signal = data.decode('UTF-8')
-        if signal == "True":
+        if signal == "True": #Check is the received messages says True
             GPIO.output(18, GPIO.HIGH)
             inbraak = True
-        if signal == "connected" and inbraak == False:
+        if signal == "connected" and inbraak == False: # Checks if the received message is connected and if there is no inbraak
             connection_counter = 0
             GPIO.output(18, GPIO.LOW)
             continue
-    if GPIO.input(23) and GPIO.input(24):
-        both_buttons += 1
-    else:
+    if GPIO.input(23) and GPIO.input(24): # Checks if both buttons are pressed down
+        both_buttons += 1 # Increases counter by 1
+    else: # Resets counter if buttons are released
         both_buttons = 0
-    if both_buttons == 50:
+    if both_buttons == 50: # Sends a message to reset the client if both buttons have been pressed down for five seconds
         data = bytes("Reset", 'UTF-8')
         UDPSock.sendto(data, send_addr)
         GPIO.output(18, GPIO.LOW)
