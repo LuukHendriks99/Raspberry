@@ -3,6 +3,7 @@
 import RPi.GPIO as GPIO
 from socket import *
 import select
+import time
 client1 = "192.168.42.1"
 self = ""
 port = 13000
@@ -31,6 +32,7 @@ while True:
         GPIO.output(18, GPIO.HIGH)
         connection_counter = 0
     readers, _, _ = select.select([UDPSock], [], [], 0.1)
+    time.sleep(0.1)
     for reader in readers:
         data = reader.recv(buf)
         signal = data.decode('UTF-8')
